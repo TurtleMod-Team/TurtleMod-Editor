@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurtleMod Editor</title>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #f4f7f4;
+        font-family: "Inter", sans-serif;
+      }
+
+      #loading {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #e8f7eb;
+        color: #1f7a3a;
+        font-size: 1.5rem;
+        z-index: 10;
+      }
+
+      #editor-root {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="loading">Loading TurtleMod Editor…</div>
+    <div id="editor-root"></div>
+
+    <script src="engine/editor.js"></script>
+    <script src="engine/blocks.js"></script>
+    <script src="engine/renderer.js"></script>
+    <script src="engine/workspace.js"></script>
+
+    <script>
+      window.addEventListener("load", () => {
+        document.getElementById("loading").style.display = "none";
+        if (window.TurtleModEditor) {
+          window.TurtleModEditor.init("editor-root");
+        } else {
+          alert("Editor engine failed to load.");
+        }
+      });
+    </script>
+  </body>
+</html>
