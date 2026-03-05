@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TurtleMod Editor</title>
 
+    <link rel="stylesheet" href="ui/style.css">
+
     <style>
       body {
         margin: 0;
@@ -36,19 +38,15 @@
     <div id="loading">Loading TurtleMod Editor…</div>
     <div id="editor-root"></div>
 
-    <script src="engine/editor.js"></script>
     <script src="engine/blocks.js"></script>
-    <script src="engine/renderer.js"></script>
     <script src="engine/workspace.js"></script>
+    <script src="engine/renderer.js"></script>
+    <script src="engine/editor.js"></script>
 
     <script>
       window.addEventListener("load", () => {
         document.getElementById("loading").style.display = "none";
-        if (window.TurtleModEditor) {
-          window.TurtleModEditor.init("editor-root");
-        } else {
-          alert("Editor engine failed to load.");
-        }
+        window.TurtleModEditor.init("editor-root");
       });
     </script>
   </body>
