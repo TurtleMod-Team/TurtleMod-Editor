@@ -2,7 +2,6 @@
 
 window.TurtleModEditor = (() => {
   const Editor = {};
-  let workspaceHandle = null;
 
   Editor.init = function (rootId) {
     const root = document.getElementById(rootId);
@@ -11,7 +10,6 @@ window.TurtleModEditor = (() => {
       return;
     }
 
-    // Layout: left = blocks, center = workspace, right = stage
     root.innerHTML = `
       <div id="tm-editor">
         <div id="tm-sidebar"></div>
@@ -20,7 +18,6 @@ window.TurtleModEditor = (() => {
       </div>
     `;
 
-    // Basic flex layout
     const style = document.createElement("style");
     style.textContent = `
       #tm-editor {
@@ -46,18 +43,16 @@ window.TurtleModEditor = (() => {
     `;
     document.head.appendChild(style);
 
-    // Init subsystems
     TurtleModBlocks.initSidebar(document.getElementById("tm-sidebar"));
-    workspaceHandle = TurtleModWorkspace.init(document.getElementById("tm-workspace"));
-    TurtleModRenderer.initStage(document.getElementById("tm-stage"), workspaceHandle);
+    const workspace = TurtleModWorkspace.init(document.getElementById("tm-workspace"));
+    TurtleModRenderer.initStage(document.getElementById("tm-stage"), workspace);
 
-    // Hook runtime if present
-    if (window.TurtleModRuntime && typeof window.TurtleModRuntime.init === "function") {
-      window.TurtleModRuntime.init(workspaceHandle);
+    if (window.TurtleModRuntime) {
+      TurtleModRuntime.init(workspace);
     }
-
-    Editor.workspace = workspaceHandle;
-    return workspaceHandle;
+    if (window.TurtleModIO) {
+      TurtleModIO.init(workspace);
+    }
   };
 
   return Editor;
