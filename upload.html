@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Project – TurtleMod Editor</title>
+
+    <style>
+      body {
+        background: #e8f7eb;
+        font-family: "Inter", sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+        color: #1f7a3a;
+      }
+
+      #box {
+        background: #ffffff;
+        padding: 30px 40px;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      }
+
+      input[type="file"] {
+        margin-top: 15px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="box">
+      <h1>Upload a TurtleMod Project</h1>
+      <p>Select a <strong>.tmod</strong> project file to open in the editor.</p>
+
+      <input id="fileInput" type="file" accept=".tmod,.json,.tmproj">
+
+      <p id="status"></p>
+    </div>
+
+    <script>
+      const input = document.getElementById("fileInput");
+      const status = document.getElementById("status");
+
+      input.addEventListener("change", async () => {
+        const file = input.files[0];
+        if (!file) return;
+
+        status.textContent = "Loading project…";
+
+        const text = await file.text();
+
+        // Store project in sessionStorage for the editor to load
+        sessionStorage.setItem("turtlemod_project", text);
+
+        status.textContent = "Opening editor…";
+
+        // Redirect to editor root
+        window.location.href = "./";
+      });
+    </script>
+  </body>
+</html>
