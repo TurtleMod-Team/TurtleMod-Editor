@@ -2,6 +2,7 @@
 
 window.TurtleModEditor = (() => {
   const Editor = {};
+  let workspaceHandle = null;
 
   Editor.init = function (rootId) {
     const root = document.getElementById(rootId);
@@ -47,8 +48,16 @@ window.TurtleModEditor = (() => {
 
     // Init subsystems
     TurtleModBlocks.initSidebar(document.getElementById("tm-sidebar"));
-    const workspace = TurtleModWorkspace.init(document.getElementById("tm-workspace"));
-    TurtleModRenderer.initStage(document.getElementById("tm-stage"), workspace);
+    workspaceHandle = TurtleModWorkspace.init(document.getElementById("tm-workspace"));
+    TurtleModRenderer.initStage(document.getElementById("tm-stage"), workspaceHandle);
+
+    // Hook runtime if present
+    if (window.TurtleModRuntime && typeof window.TurtleModRuntime.init === "function") {
+      window.TurtleModRuntime.init(workspaceHandle);
+    }
+
+    Editor.workspace = workspaceHandle;
+    return workspaceHandle;
   };
 
   return Editor;
