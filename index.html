@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TurtleMod Editor</title>
+
+    <link rel="stylesheet" href="ui/style.css">
+
     <style>
       body {
         margin: 0;
@@ -28,16 +31,45 @@
         width: 100vw;
         height: 100vh;
       }
+
+      #tm-controls {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 20;
+        display: flex;
+        gap: 8px;
+      }
+
+      #tm-controls button {
+        padding: 4px 10px;
+        border-radius: 6px;
+        border: 1px solid #c8e6d0;
+        background: #ffffff;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      #tm-controls button:hover {
+        background: #e8f7eb;
+      }
     </style>
   </head>
 
   <body>
     <div id="loading">Loading TurtleMod Editor…</div>
+
+    <div id="tm-controls">
+      <button onclick="window.TurtleModRuntime && TurtleModRuntime.run()">Run</button>
+      <button onclick="window.TurtleModRuntime && TurtleModRuntime.stop()">Stop</button>
+    </div>
+
     <div id="editor-root"></div>
 
     <script src="engine/blocks.js"></script>
     <script src="engine/workspace.js"></script>
     <script src="engine/renderer.js"></script>
+    <script src="engine/runtime.js"></script>
     <script src="engine/editor.js"></script>
 
     <script>
