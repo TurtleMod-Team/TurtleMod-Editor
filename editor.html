@@ -23,19 +23,35 @@
   <body>
     <div id="editor-root"></div>
 
-    <!-- TurtleMod Engine -->
+    <!-- ========================================= -->
+    <!--  SCRATCH RENDERER (REQUIRED FOR VM)       -->
+    <!-- ========================================= -->
+    <script src="https://unpkg.com/scratch-render/dist/web/scratch-render.js"></script>
+    <script src="https://unpkg.com/scratch-svg-renderer/dist/web/scratch-svg-renderer.js"></script>
+    <script src="https://unpkg.com/scratch-storage/dist/web/scratch-storage.js"></script>
+
+    <!-- ========================================= -->
+    <!--  TURTLEMOD ENGINE FILES                   -->
+    <!-- ========================================= -->
     <script src="engine/blocks.js"></script>
     <script src="engine/workspace.js"></script>
     <script src="engine/renderer.js"></script>
 
-    <!-- ⭐ IMPORTANT: Load the VM bridge BEFORE runtime.js -->
+    <!-- ========================================= -->
+    <!--  VM BRIDGE (MUST LOAD BEFORE runtime.js)  -->
+    <!-- ========================================= -->
     <script src="engine/snailvm.js"></script>
 
+    <!-- ========================================= -->
+    <!--  RUNTIME + IO + EDITOR                    -->
+    <!-- ========================================= -->
     <script src="engine/runtime.js"></script>
     <script src="engine/io.js"></script>
     <script src="engine/editor.js"></script>
 
-    <!-- UI -->
+    <!-- ========================================= -->
+    <!--  UI                                       -->
+    <!-- ========================================= -->
     <script src="ui/toolbar.js"></script>
 
     <script>
