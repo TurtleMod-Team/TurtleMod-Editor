@@ -1,7 +1,7 @@
 // engine/editor.js
 //
 // TurtleMod Editor Core
-// Updated to attach to #editor-root instead of #tm-editor
+// Updated to attach to #editor-root and initialize sidebar blocks
 //
 
 window.TurtleModEditor = (() => {
@@ -37,6 +37,11 @@ window.TurtleModEditor = (() => {
       borderRight: "1px solid #dcdcdc",
       overflowY: "auto"
     });
+
+    // Initialize block palette in sidebar
+    if (window.TurtleModBlocks) {
+      TurtleModBlocks.initSidebar(sidebar);
+    }
 
     // Workspace
     const workspace = document.createElement("div");
