@@ -1,41 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TurtleMod Editor</title>
 
     <style>
       body {
         margin: 0;
-        overflow: hidden;
-        background: #f4f7f4;
         font-family: "Inter", sans-serif;
+        background: #f4f7f4;
+        color: #1a1a1a;
       }
 
-      #editor-root {
-        width: 100vw;
-        height: 100vh;
+      header {
+        background: #2e8b57;
+        color: white;
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      header .logo {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      header nav a {
+        color: white;
+        margin-left: 18px;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .viewer-container {
+        width: 100%;
+        max-width: 900px;
+        margin: 40px auto 20px auto;
+        background: #dfeee3;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      }
+
+      .viewer-box {
+        width: 100%;
+        height: 360px;
+        background: #cfe5d4;
+        border-radius: 8px;
+      }
+
+      .description {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 0 20px;
+        text-align: center;
+      }
+
+      .projects-section {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+
+      .error-box {
+        background: #ffecec;
+        border: 1px solid #ffb3b3;
+        padding: 16px;
+        border-radius: 8px;
+        text-align: center;
+        color: #b30000;
+      }
+
+      .error-box a {
+        color: #b30000;
+        font-weight: 600;
+      }
+
+      footer {
+        margin-top: 60px;
+        padding: 30px 20px;
+        background: #e8f3ea;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      footer .links a {
+        margin: 0 10px;
+        color: #2e8b57;
+        text-decoration: none;
+        font-weight: 500;
       }
     </style>
   </head>
 
   <body>
-    <div id="editor-root"></div>
 
-    <script src="engine/blocks.js"></script>
-    <script src="engine/workspace.js"></script>
-    <script src="engine/renderer.js"></script>
-    <script src="engine/runtime.js"></script>
-    <script src="engine/io.js"></script>
-    <script src="engine/editor.js"></script>
-    <script src="ui/toolbar.js"></script>
+    <!-- Top Navigation -->
+    <header>
+      <div class="logo">TurtleMod Editor</div>
+      <nav>
+        <a href="editor.html">Open Editor</a>
+        <a href="https://turtlemod-team.github.io/TurlteMod-Website/">Website</a>
+        <a href="https://github.com/Turtlemod-Team">GitHub</a>
+      </nav>
+    </header>
 
-    <script>
-      window.addEventListener("load", () => {
-        TurtleModEditor.init("editor-root");
-        TurtleModToolbar.init();
-      });
-    </script>
+    <!-- Viewer -->
+    <div class="viewer-container">
+      <div class="viewer-box"></div>
+    </div>
+
+    <!-- Description -->
+    <div class="description">
+      <h2>Welcome to TurtleMod Editor</h2>
+      <p>
+        TurtleMod is built on Scratch, TurboWarp, PenguinMod, and Snail IDE.
+        It adds new blocks, features, and tools for advanced creators.
+        Choose a project below or open the editor to begin.
+      </p>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="projects-section">
+      <h3>Featured Projects</h3>
+
+      <div class="error-box">
+        There was an error loading the next page of projects.<br />
+        <a href="https://turtlemod-team.github.io/TurlteMod-Website/projects.html?q=">View projects in new tab</a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>
+        TurtleMod is not affiliated with Scratch, the Scratch Team, TurboWarp,
+        PenguinMod, or Snail IDE.
+      </p>
+
+      <div class="links">
+        <a href="https://turtlemod-team.github.io/TurlteMod-Website/credits.html">Credits</a>
+        <a href="https://turtlemod-team.github.io/TurlteMod-Website/packager.html">Packager</a>
+        <a href="https://turtlemod-team.github.io/TurlteMod-Website/docs.html">Documentation</a>
+        <a href="https://turtlemod-team.github.io/TurlteMod-Website/feedback.html">Feedback</a>
+        <a href="https://github.com/Turtlemod-Team">Source Code</a>
+      </div>
+    </footer>
+
   </body>
 </html>
