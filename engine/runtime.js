@@ -9,34 +9,24 @@ window.TurtleModRuntime = (() => {
   let workspaceRef = null;
   let running = false;
 
-  // Map TurtleMod block IDs → Snail/Scratch opcodes
   const BLOCK_MAP = {
     tm_when_flag_clicked: "event_whenflagclicked",
     tm_move_10_steps: "motion_movesteps",
     tm_turn_15_deg: "motion_turnright"
   };
 
-  // Simple default inputs for demo purposes
   const DEFAULT_INPUTS = {
     motion_movesteps: {
-      STEPS: [1, "10"] // number input 10
+      STEPS: [1, "10"]
     },
     motion_turnright: {
       DEGREES: [1, "15"]
     }
   };
 
-  /* ---------------------------------------------- */
-  /* Init                                           */
-  /* ---------------------------------------------- */
-
   Runtime.init = function (workspace) {
     workspaceRef = workspace;
   };
-
-  /* ---------------------------------------------- */
-  /* Build Snail-style project JSON                 */
-  /* ---------------------------------------------- */
 
   function buildProjectFromWorkspace() {
     if (!workspaceRef || !workspaceRef.getBlocks) {
@@ -75,7 +65,6 @@ window.TurtleModRuntime = (() => {
       topBlocks.push(id);
     });
 
-    // Link blocks linearly for now (simple stack)
     for (let i = 0; i < topBlocks.length - 1; i++) {
       const currentId = topBlocks[i];
       const nextId = topBlocks[i + 1];
@@ -106,10 +95,6 @@ window.TurtleModRuntime = (() => {
 
     return project;
   }
-
-  /* ---------------------------------------------- */
-  /* Run / Stop                                     */
-  /* ---------------------------------------------- */
 
   Runtime.run = async function () {
     if (!window.SnailIDE || !window.SnailIDE.vm) {
