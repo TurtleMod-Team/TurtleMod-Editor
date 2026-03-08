@@ -12,7 +12,6 @@ window.TurtleModIO = (() => {
     workspaceRef = workspace;
   };
 
-  // Turn workspace blocks into a simple TurtleMod JSON
   IO.exportProject = function () {
     if (!workspaceRef || !workspaceRef.getBlocks) return null;
 
@@ -60,12 +59,16 @@ window.TurtleModIO = (() => {
     const workspaceEl = document.getElementById("tm-workspace");
     if (!workspaceEl) return;
 
-    // Clear existing blocks
     const blocksArr = workspaceRef.getBlocks();
     blocksArr.forEach(b => b.el.remove());
     blocksArr.length = 0;
 
-    if (!json.blocks) return;
+    if (!json.blocks) {
+      if (window.TurtleModToolbar && window.TurtleModToolbar.setBlockCount) {
+        TurtleModToolbar.setBlockCount(0);
+      }
+      return;
+    }
 
     json.blocks.forEach(b => {
       const def = {
@@ -79,12 +82,15 @@ window.TurtleModIO = (() => {
         clientY: 0
       };
 
-      // Spawn block at 0,0 then move it
       TurtleModWorkspace.spawnBlockFromPalette(def, fakeEvent);
       const last = workspaceRef.getBlocks()[workspaceRef.getBlocks().length - 1];
       last.el.style.left = b.x + "px";
       last.el.style.top = b.y + "px";
     });
+
+    if (window.TurtleModToolbar && window.TurtleModToolbar.setBlockCount) {
+      TurtleModToolbar.setBlockCount(workspaceRef.getBlocks().length);
+    }
   };
 
   IO.openFilePicker = function () {
@@ -111,7 +117,6 @@ window.TurtleModIO = (() => {
     input.click();
   };
 
-  // For upload.html flow
   IO.exportForUpload = function () {
     const project = IO.exportProject();
     if (!project) return;
