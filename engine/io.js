@@ -1,6 +1,6 @@
 // engine/io.js
 //
-// Saving, loading, and exporting TurtleMod projects as JSON.
+// Saving, loading, and exporting TurtleMod projects as Scratch-style JSON.
 //
 
 window.TurtleModIO = (() => {
@@ -12,33 +12,72 @@ window.TurtleModIO = (() => {
     workspaceRef = workspace;
   };
 
+  // ---------------------------------------------
+  // Block opcode mapping
+  // ---------------------------------------------
+  const OPCODES = {
+    tm_when_flag_clicked: "event_whenflagclicked",
+    tm_move_10_steps: "motion_movesteps",
+    tm_turn_15_deg: "motion_turnright"
+  };
+
+  // ---------------------------------------------
+  // Export project in Scratch JSON format
+  // ---------------------------------------------
   IO.exportProject = function () {
     if (!workspaceRef || !workspaceRef.getBlocks) return null;
 
     const blocksArr = workspaceRef.getBlocks();
+    const blockMap = {};
 
-    const blocks = blocksArr.map(b => {
+    blocksArr.forEach(b => {
       const rect = b.el.getBoundingClientRect();
       const parent = b.el.parentElement.getBoundingClientRect();
 
-      return {
-        id: b.def.id,
-        label: b.def.label,
-        color: b.def.color,
+      const blockId = crypto.randomUUID();
+
+      blockMap[blockId] = {
+        opcode: OPCODES[b.def.id] || "unknown_block",
+        next: null,
+        parent: null,
+        inputs: {},
+        fields: {},
+        topLevel: true,
         x: rect.left - parent.left,
         y: rect.top - parent.top
       };
     });
 
+    // Scratch-style project wrapper
     return {
       meta: {
-        format: "turtlemod-project",
-        version: 1
+        semver: "3.0.0",
+        vm: "TurtleMod",
+        agent: "TurtleMod Editor"
       },
-      blocks
+      targets: [
+        {
+          isStage: false,
+          name: "Sprite1",
+          blocks: blockMap,
+          costumes: [],
+          sounds: [],
+          currentCostume: 0,
+          visible: true,
+          x: 0,
+          y: 0,
+          size: 100,
+          direction: 90,
+          draggable: false,
+          rotationStyle: "all around"
+        }
+      ]
     };
   };
 
+  // ---------------------------------------------
+  // Download project as JSON
+  // ---------------------------------------------
   IO.downloadProject = function () {
     const project = IO.exportProject();
     if (!project) return;
@@ -54,6 +93,9 @@ window.TurtleModIO = (() => {
     URL.revokeObjectURL(a.href);
   };
 
+  // ---------------------------------------------
+  // Load project (simple version)
+  // ---------------------------------------------
   IO.loadFromJSON = function (json) {
     if (!workspaceRef || !workspaceRef.getBlocks) return;
     const workspaceEl = document.getElementById("tm-workspace");
@@ -63,60 +105,29 @@ window.TurtleModIO = (() => {
     blocksArr.forEach(b => b.el.remove());
     blocksArr.length = 0;
 
-    if (!json.blocks) {
-      if (window.TurtleModToolbar && window.TurtleModToolbar.setBlockCount) {
-        TurtleModToolbar.setBlockCount(0);
-      }
-      return;
-    }
+    if (!json.targets || !json.targets[0] || !json.targets[0].blocks) return;
 
-    json.blocks.forEach(b => {
+    const blocks = json.targets[0].blocks;
+
+    Object.values(blocks).forEach(b => {
       const def = {
-        id: b.id,
-        label: b.label,
-        color: b.color
+        id: Object.keys(OPCODES).find(k => OPCODES[k] === b.opcode),
+        label: b.opcode,
+        color: "#4c97ff"
       };
 
-      const fakeEvent = {
-        clientX: 0,
-        clientY: 0
-      };
-
+      const fakeEvent = { clientX: 0, clientY: 0 };
       TurtleModWorkspace.spawnBlockFromPalette(def, fakeEvent);
+
       const last = workspaceRef.getBlocks()[workspaceRef.getBlocks().length - 1];
       last.el.style.left = b.x + "px";
       last.el.style.top = b.y + "px";
     });
-
-    if (window.TurtleModToolbar && window.TurtleModToolbar.setBlockCount) {
-      TurtleModToolbar.setBlockCount(workspaceRef.getBlocks().length);
-    }
   };
 
-  IO.openFilePicker = function () {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json";
-
-    input.addEventListener("change", () => {
-      const file = input.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = () => {
-        try {
-          const json = JSON.parse(reader.result);
-          IO.loadFromJSON(json);
-        } catch (e) {
-          alert("Invalid TurtleMod project file.");
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    input.click();
-  };
-
+  // ---------------------------------------------
+  // Save for upload.html
+  // ---------------------------------------------
   IO.exportForUpload = function () {
     const project = IO.exportProject();
     if (!project) return;
