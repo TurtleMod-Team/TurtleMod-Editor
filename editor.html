@@ -23,12 +23,19 @@
   <body>
     <div id="editor-root"></div>
 
+    <!-- TurtleMod Engine -->
     <script src="engine/blocks.js"></script>
     <script src="engine/workspace.js"></script>
     <script src="engine/renderer.js"></script>
+
+    <!-- ⭐ IMPORTANT: Load the VM bridge BEFORE runtime.js -->
+    <script src="engine/snailvm.js"></script>
+
     <script src="engine/runtime.js"></script>
     <script src="engine/io.js"></script>
     <script src="engine/editor.js"></script>
+
+    <!-- UI -->
     <script src="ui/toolbar.js"></script>
 
     <script>
