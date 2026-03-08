@@ -1,36 +1,48 @@
 // engine/workspace.js
+//
+// TurtleMod Workspace
+// Manages block instances placed in the editor.
+//
 
 window.TurtleModWorkspace = (() => {
   const Workspace = {};
   let workspaceEl;
   let blocks = [];
 
+  // ---------------------------------------------
+  // Initialize workspace
+  // ---------------------------------------------
   Workspace.init = function (el) {
     workspaceEl = el;
     workspaceEl.style.overflow = "hidden";
-
-    workspaceEl.addEventListener("mousedown", () => {
-      // could clear selection later
-    });
 
     return {
       getBlocks: () => blocks
     };
   };
 
+  // ---------------------------------------------
+  // Spawn a block from the palette
+  // ---------------------------------------------
   Workspace.spawnBlockFromPalette = function (blockDef, mouseOrTouchEvent) {
     if (!workspaceEl) return;
 
     const blockEl = document.createElement("div");
     blockEl.textContent = blockDef.label;
-    blockEl.style.position = "absolute";
-    blockEl.style.background = blockDef.color;
-    blockEl.style.color = "#fff";
-    blockEl.style.padding = "6px 10px";
-    blockEl.style.borderRadius = "8px";
-    blockEl.style.cursor = "grab";
-    blockEl.style.userSelect = "none";
+    blockEl.className = "tm-block";
 
+    Object.assign(blockEl.style, {
+      position: "absolute",
+      background: blockDef.color,
+      color: "#fff",
+      padding: "6px 10px",
+      borderRadius: "8px",
+      cursor: "grab",
+      userSelect: "none",
+      fontSize: "14px"
+    });
+
+    // Position where the user clicked
     const rect = workspaceEl.getBoundingClientRect();
     const clientX = mouseOrTouchEvent.touches
       ? mouseOrTouchEvent.touches[0].clientX
@@ -42,19 +54,28 @@ window.TurtleModWorkspace = (() => {
     blockEl.style.left = clientX - rect.left + "px";
     blockEl.style.top = clientY - rect.top + "px";
 
+    // Make draggable
     makeDraggable(blockEl);
+
+    // Add to DOM
     workspaceEl.appendChild(blockEl);
 
+    // Store block instance
     blocks.push({
+      id: crypto.randomUUID(),
       def: blockDef,
-      el: blockEl
+      el: blockEl,
+      x: clientX - rect.left,
+      y: clientY - rect.top,
+      next: null,
+      parent: null,
+      inputs: {}
     });
-
-    if (window.TurtleModToolbar && window.TurtleModToolbar.setBlockCount) {
-      TurtleModToolbar.setBlockCount(blocks.length);
-    }
   };
 
+  // ---------------------------------------------
+  // Draggable behavior
+  // ---------------------------------------------
   function makeDraggable(el) {
     let offsetX = 0;
     let offsetY = 0;
@@ -112,6 +133,9 @@ window.TurtleModWorkspace = (() => {
     });
   }
 
+  // ---------------------------------------------
+  // Internal access
+  // ---------------------------------------------
   Workspace._getInternalBlocks = () => blocks;
 
   return Workspace;
