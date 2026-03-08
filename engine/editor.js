@@ -1,160 +1,74 @@
 // engine/editor.js
 //
-// Main layout for the TurtleMod Editor.
-// Updated to use a Snail IDE–style layout with TurtleMod green theme.
+// TurtleMod Editor Core
+// Updated to attach to #editor-root instead of #tm-editor
 //
 
 window.TurtleModEditor = (() => {
   const Editor = {};
 
-  Editor.init = function () {
-    const root = document.getElementById("tm-editor");
+  Editor.init = function (rootId) {
+    const root = document.getElementById(rootId);
     if (!root) {
-      console.error("TurtleModEditor: #tm-editor not found");
+      console.error(`TurtleModEditor: #${rootId} not found`);
       return;
     }
 
-    // -------------------------------
-    // Apply SnailMod-Green Layout
-    // -------------------------------
-    Object.assign(root.style, {
-      display: "grid",
-      gridTemplateRows: "56px 1fr", // Snail-style tall top bar
-      gridTemplateColumns: "260px 1fr 320px",
-      height: "100vh",
-      width: "100vw",
-      overflow: "hidden",
-      background: "#e8f5e9" // soft greenish background
-    });
+    // Create main editor container
+    const editor = document.createElement("div");
+    editor.id = "tm-editor";
 
-    // -------------------------------
-    // Top Bar (Snail-style)
-    // -------------------------------
-    const topbar = document.createElement("div");
-    topbar.id = "tm-topbar";
-
-    Object.assign(topbar.style, {
-      gridColumn: "1 / 4",
-      gridRow: "1 / 2",
-      background: "#1f7a3a", // dark TurtleMod green
-      color: "white",
+    Object.assign(editor.style, {
+      width: "100%",
+      height: "calc(100vh - 56px)", // below toolbar
       display: "flex",
-      alignItems: "center",
-      padding: "0 16px",
-      fontSize: "18px",
-      fontWeight: "600",
-      boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-      zIndex: 20
+      flexDirection: "row",
+      overflow: "hidden",
+      background: "#f4f7f4"
     });
 
-    topbar.textContent = "TurtleMod Editor"; // Snail-style title placeholder
-
-    root.appendChild(topbar);
-
-    // -------------------------------
-    // Sidebar (Snail-style card)
-    // -------------------------------
+    // Sidebar
     const sidebar = document.createElement("div");
     sidebar.id = "tm-sidebar";
 
     Object.assign(sidebar.style, {
-      gridColumn: "1 / 2",
-      gridRow: "2 / 3",
+      width: "240px",
       background: "#ffffff",
-      borderRight: "2px solid #c8e6d0",
-      display: "flex",
-      flexDirection: "column",
-      overflowY: "auto",
-      boxShadow: "2px 0 6px rgba(0,0,0,0.08)",
-      zIndex: 10
+      borderRight: "1px solid #dcdcdc",
+      overflowY: "auto"
     });
 
-    // Sidebar header (Snail-style)
-    const sidebarHeader = document.createElement("div");
-    sidebarHeader.textContent = "Blocks";
-    Object.assign(sidebarHeader.style, {
-      background: "#1f7a3a",
-      color: "white",
-      padding: "10px 14px",
-      fontSize: "16px",
-      fontWeight: "600",
-      borderBottom: "3px solid #4cce6a" // light green accent
-    });
-
-    sidebar.appendChild(sidebarHeader);
-
-    // Container for blocks
-    const sidebarContent = document.createElement("div");
-    sidebarContent.id = "tm-sidebar-content";
-    sidebarContent.style.flex = "1";
-    sidebar.appendChild(sidebarContent);
-
-    root.appendChild(sidebar);
-
-    // -------------------------------
-    // Workspace (Snail-style card)
-    // -------------------------------
+    // Workspace
     const workspace = document.createElement("div");
     workspace.id = "tm-workspace";
 
     Object.assign(workspace.style, {
-      gridColumn: "2 / 3",
-      gridRow: "2 / 3",
-      background: "#ffffff",
-      margin: "12px",
-      borderRadius: "10px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+      flex: "1",
+      background: "#eef2ee",
       position: "relative",
       overflow: "hidden"
     });
 
-    root.appendChild(workspace);
-
-    // -------------------------------
-    // Stage Panel (Snail-style card)
-    // -------------------------------
+    // Stage
     const stage = document.createElement("div");
     stage.id = "tm-stage";
 
     Object.assign(stage.style, {
-      gridColumn: "3 / 4",
-      gridRow: "2 / 3",
+      width: "360px",
       background: "#ffffff",
-      margin: "12px 12px 12px 0",
-      borderRadius: "10px",
-      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      position: "relative",
-      overflow: "hidden",
-      display: "flex",
-      flexDirection: "column"
+      borderLeft: "1px solid #dcdcdc",
+      overflow: "hidden"
     });
 
-    root.appendChild(stage);
+    // Assemble editor layout
+    editor.appendChild(sidebar);
+    editor.appendChild(workspace);
+    editor.appendChild(stage);
 
-    // -------------------------------
-    // Initialize subsystems
-    // -------------------------------
-    if (window.TurtleModBlocks) {
-      TurtleModBlocks.initSidebar(sidebarContent);
-    }
+    // Insert editor into root
+    root.appendChild(editor);
 
-    if (window.TurtleModWorkspace) {
-      const ws = TurtleModWorkspace.init(workspace);
-      if (window.TurtleModRuntime) {
-        TurtleModRuntime.init(ws);
-      }
-      if (window.TurtleModIO) {
-        TurtleModIO.init(ws);
-      }
-    }
-
-    if (window.TurtleModRenderer) {
-      TurtleModRenderer.initStage(stage);
-    }
-
-    if (window.TurtleModToolbar) {
-      TurtleModToolbar.init(); // attaches to top bar automatically
-    }
+    console.log("TurtleModEditor initialized");
   };
 
   return Editor;
