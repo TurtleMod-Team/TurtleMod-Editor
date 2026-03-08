@@ -3,264 +3,62 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurtleMod Upload</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>TurtleMod Editor</title>
 
     <style>
       body {
+        margin: 0;
+        overflow: hidden;
         background: #f4f7f4;
         font-family: "Inter", sans-serif;
-        margin: 0;
-        padding: 20px;
-        color: #1a1a1a;
       }
 
-      #container {
-        max-width: 900px;
-        margin: auto;
-        background: #ffffff;
-        padding: 25px;
-        border-radius: 12px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-        display: flex;
-        gap: 20px;
-      }
-
-      #left {
-        flex: 1;
-      }
-
-      #right {
-        width: 200px;
-        text-align: center;
-      }
-
-      h1 {
-        color: #1f7a3a;
-        margin-top: 0;
-      }
-
-      label {
-        font-weight: bold;
-        display: block;
-        margin-top: 15px;
-      }
-
-      input[type="text"], textarea {
-        width: 100%;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #c8e6d0;
-        margin-top: 5px;
-        font-size: 15px;
-      }
-
-      textarea {
-        height: 80px;
-        resize: vertical;
-      }
-
-      #thumb {
-        width: 180px;
-        height: 135px;
-        background: #e8f7eb;
-        border: 1px solid #c8e6d0;
-        border-radius: 6px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: auto;
-        font-size: 14px;
-        color: #1f7a3a;
-      }
-
-      button {
-        background: #1f7a3a;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 8px;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 20px;
-      }
-
-      button:hover {
-        background: #17602d;
-      }
-
-      #back {
-        background: #4c97ff;
-        margin-left: 10px;
-      }
-
-      #back:hover {
-        background: #3a7bd5;
-      }
-
-      #small {
-        font-size: 13px;
-        margin-top: 10px;
-        color: #555;
+      #editor-root {
+        width: 100vw;
+        height: 100vh;
       }
     </style>
   </head>
 
   <body>
-    <div id="container">
-      <div id="left">
-        <h1>Upload Your TurtleMod Project</h1>
+    <div id="editor-root"></div>
 
-        <label>Project Title</label>
-        <input id="title" type="text">
+    <!-- ========================================= -->
+    <!--  SCRATCH RENDERER (REQUIRED FOR VM)       -->
+    <!-- ========================================= -->
+    <script src="https://unpkg.com/scratch-render/dist/web/scratch-render.js"></script>
+    <script src="https://unpkg.com/scratch-svg-renderer/dist/web/scratch-svg-renderer.js"></script>
+    <script src="https://unpkg.com/scratch-storage/dist/web/scratch-storage.js"></script>
 
-        <label>Instructions</label>
-        <textarea id="instructions" placeholder="Tell others how to use or play your project..."></textarea>
+    <!-- ========================================= -->
+    <!--  TURTLEMOD ENGINE FILES                   -->
+    <!-- ========================================= -->
+    <script src="engine/blocks.js"></script>
+    <script src="engine/workspace.js"></script>
+    <script src="engine/renderer.js"></script>
 
-        <label>Notes and Credits</label>
-        <textarea id="credits" placeholder="List people who helped create this project..."></textarea>
+    <!-- ========================================= -->
+    <!--  VM BRIDGE (MUST LOAD BEFORE runtime.js)  -->
+    <!-- ========================================= -->
+    <script src="engine/snailvm.js"></script>
 
-        <button onclick="publish()">Upload</button>
-        <button id="back" onclick="goBack()">Back to Editor</button>
-      </div>
+    <!-- ========================================= -->
+    <!--  RUNTIME + IO + EDITOR                    -->
+    <!-- ========================================= -->
+    <script src="engine/runtime.js"></script>
+    <script src="engine/io.js"></script>
+    <script src="engine/editor.js"></script>
 
-      <div id="right">
-        <div id="thumb">No image</div>
-        <input id="thumbInput" type="file" accept="image/*">
-        <div id="small">Use my own image</div>
-      </div>
-    </div>
+    <!-- ========================================= -->
+    <!--  UI                                       -->
+    <!-- ========================================= -->
+    <script src="ui/toolbar.js"></script>
 
     <script>
-      // -------------------------------
-      // Supabase Setup
-      // -------------------------------
-      const SUPABASE_URL = "https://hzpfzgkaxlcxnbacdlme.supabase.co";
-      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh6cGZ6Z2theGxjeG5iYWNkbG1lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MjE3MzUsImV4cCI6MjA4ODM5NzczNX0.fbuOM89xwCIUsvy2vSGbIXzAHqs5eMad7AkHtzzHCiU";
-
-      const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-      // -------------------------------
-      // Load project from sessionStorage
-      // -------------------------------
-      const projectData = sessionStorage.getItem("turtlemod-project");
-      if (!projectData) {
-        alert("No project data found. Return to the editor.");
-      }
-
-      // -------------------------------
-      // URL parameters
-      // -------------------------------
-      const params = new URLSearchParams(window.location.search);
-      const name = params.get("name") || "Project";
-      const external = params.get("external") || "../";
-
-      document.getElementById("title").value = name;
-
-      // -------------------------------
-      // Thumbnail preview
-      // -------------------------------
-      let thumbnailFile = null;
-
-      document.getElementById("thumbInput").addEventListener("change", e => {
-        thumbnailFile = e.target.files[0];
-        if (!thumbnailFile) return;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          const thumb = document.getElementById("thumb");
-          thumb.style.backgroundImage = `url(${reader.result})`;
-          thumb.style.backgroundSize = "cover";
-          thumb.textContent = "";
-        };
-        reader.readAsDataURL(thumbnailFile);
+      window.addEventListener("load", () => {
+        TurtleModEditor.init("editor-root");
+        TurtleModToolbar.init();
       });
-
-      // -------------------------------
-      // Back to editor
-      // -------------------------------
-      function goBack() {
-        window.location.href = external;
-      }
-
-      // -------------------------------
-      // Upload Project
-      // -------------------------------
-      async function publish() {
-        const title = document.getElementById("title").value.trim();
-        const instructions = document.getElementById("instructions").value.trim();
-        const credits = document.getElementById("credits").value.trim();
-
-        if (!title) {
-          alert("Please enter a project title.");
-          return;
-        }
-
-        const projectId = crypto.randomUUID();
-
-        // -------------------------------
-        // Upload project JSON
-        // -------------------------------
-        const { error: projectError } = await supabase
-          .storage
-          .from("projects")
-          .upload(`${projectId}.json`, projectData, {
-            contentType: "application/json"
-          });
-
-        if (projectError) {
-          alert("Failed to upload project file.");
-          console.error(projectError);
-          return;
-        }
-
-        const projectUrl = `${SUPABASE_URL}/storage/v1/object/public/projects/${projectId}.json`;
-
-        // -------------------------------
-        // Upload thumbnail (optional)
-        // -------------------------------
-        let thumbnailUrl = null;
-
-        if (thumbnailFile) {
-          const { error: thumbError } = await supabase
-            .storage
-            .from("thumbnails")
-            .upload(`${projectId}.png`, thumbnailFile, {
-              contentType: thumbnailFile.type
-            });
-
-          if (!thumbError) {
-            thumbnailUrl = `${SUPABASE_URL}/storage/v1/object/public/thumbnails/${projectId}.png`;
-          }
-        }
-
-        // -------------------------------
-        // Insert metadata into database
-        // -------------------------------
-        const { error: dbError } = await supabase
-          .from("projects")
-          .insert({
-            id: projectId,
-            title,
-            instructions,
-            credits,
-            author: "Anonymous",
-            project_url: projectUrl,
-            thumbnail_url: thumbnailUrl
-          });
-
-        if (dbError) {
-          alert("Failed to save project metadata.");
-          console.error(dbError);
-          return;
-        }
-
-        // -------------------------------
-        // Redirect to project page
-        // -------------------------------
-        window.location.href = `https://turltemod-team.github.io/TurtleMod-Website/project.html?id=${projectId}`;
-      }
     </script>
   </body>
 </html>
