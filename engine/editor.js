@@ -13,6 +13,9 @@ window.TurtleModEditor = (() => {
       return;
     }
 
+    // ---------------------------------------------
+    // MAIN EDITOR LAYOUT
+    // ---------------------------------------------
     const editor = document.createElement("div");
     editor.id = "tm-editor";
 
@@ -25,6 +28,9 @@ window.TurtleModEditor = (() => {
       background: "#f4f7f4"
     });
 
+    // ---------------------------------------------
+    // SIDEBAR (BLOCK PALETTE)
+    // ---------------------------------------------
     const sidebar = document.createElement("div");
     sidebar.id = "tm-sidebar";
 
@@ -39,6 +45,9 @@ window.TurtleModEditor = (() => {
       TurtleModBlocks.initSidebar(sidebar);
     }
 
+    // ---------------------------------------------
+    // WORKSPACE (BLOCK AREA)
+    // ---------------------------------------------
     const workspace = document.createElement("div");
     workspace.id = "tm-workspace";
 
@@ -49,6 +58,9 @@ window.TurtleModEditor = (() => {
       overflow: "hidden"
     });
 
+    // ---------------------------------------------
+    // STAGE (RENDERER AREA)
+    // ---------------------------------------------
     const stage = document.createElement("div");
     stage.id = "tm-stage";
 
@@ -56,26 +68,47 @@ window.TurtleModEditor = (() => {
       width: "360px",
       background: "#ffffff",
       borderLeft: "1px solid #dcdcdc",
-      overflow: "hidden"
+      overflow: "hidden",
+      position: "relative"
     });
 
+    // ---------------------------------------------
+    // BUILD EDITOR UI
+    // ---------------------------------------------
     editor.appendChild(sidebar);
     editor.appendChild(workspace);
     editor.appendChild(stage);
-
     root.appendChild(editor);
 
+    // ---------------------------------------------
+    // INITIALIZE WORKSPACE ENGINE
+    // ---------------------------------------------
     const workspaceEngine = TurtleModWorkspace.init(workspace);
+
+    // ---------------------------------------------
+    // INITIALIZE IO
+    // ---------------------------------------------
     if (window.TurtleModIO) {
       TurtleModIO.init(workspaceEngine);
     }
+
+    // ---------------------------------------------
+    // INITIALIZE RUNTIME
+    // ---------------------------------------------
     if (window.TurtleModRuntime) {
       TurtleModRuntime.init(workspaceEngine);
     }
+
+    // ---------------------------------------------
+    // INITIALIZE RENDERER (IMPORTANT)
+    // ---------------------------------------------
     if (window.TurtleModRenderer) {
-      TurtleModRenderer.initStage(stage, workspaceEngine);
+      TurtleModRenderer.initStage(stage);
     }
 
+    // ---------------------------------------------
+    // TOOLBAR COUNTER
+    // ---------------------------------------------
     if (window.TurtleModToolbar && window.TurtleModToolbar.setBlockCount) {
       TurtleModToolbar.setBlockCount(workspaceEngine.getBlocks().length);
     }
