@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurtleMod Editor</title>
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #f4f7f4;
+        font-family: "Inter", sans-serif;
+      }
+
+      #editor-root {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="editor-root"></div>
+
+    <script src="engine/blocks.js"></script>
+    <script src="engine/workspace.js"></script>
+    <script src="engine/renderer.js"></script>
+    <script src="engine/runtime.js"></script>
+    <script src="engine/io.js"></script>
+    <script src="engine/editor.js"></script>
+    <script src="ui/toolbar.js"></script>
+
+    <script>
+      window.addEventListener("load", () => {
+        TurtleModEditor.init("editor-root");
+        TurtleModToolbar.init();
+      });
+    </script>
+  </body>
+</html>
