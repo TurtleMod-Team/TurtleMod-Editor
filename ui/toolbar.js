@@ -1,8 +1,6 @@
 // ui/toolbar.js
 //
 // SnailMod-Green Toolbar
-// Corrected to attach inside #editor-root (your actual HTML structure)
-// No dependency on #tm-topbar
 //
 
 window.TurtleModToolbar = (() => {
@@ -15,7 +13,6 @@ window.TurtleModToolbar = (() => {
       return;
     }
 
-    // Create toolbar container
     const bar = document.createElement("div");
     bar.id = "tm-toolbar";
 
@@ -33,9 +30,6 @@ window.TurtleModToolbar = (() => {
       userSelect: "none"
     });
 
-    // -----------------------------
-    // LEFT: Menus
-    // -----------------------------
     const left = document.createElement("div");
     Object.assign(left.style, {
       display: "flex",
@@ -62,9 +56,6 @@ window.TurtleModToolbar = (() => {
       left.appendChild(btn);
     });
 
-    // -----------------------------
-    // CENTER: Project Name Input
-    // -----------------------------
     const middle = document.createElement("div");
     Object.assign(middle.style, {
       display: "flex",
@@ -92,9 +83,6 @@ window.TurtleModToolbar = (() => {
 
     middle.appendChild(projectInput);
 
-    // -----------------------------
-    // RIGHT: Actions + Block Counter + Sign-in/Join
-    // -----------------------------
     const right = document.createElement("div");
     Object.assign(right.style, {
       display: "flex",
@@ -136,7 +124,6 @@ window.TurtleModToolbar = (() => {
       opacity: "0.9"
     });
 
-    // SIGN IN / JOIN — TurtleMod-Green Gradient
     const authBtn = document.createElement("button");
     authBtn.textContent = "Sign in / Join";
     authBtn.dataset.action = "auth";
@@ -153,25 +140,17 @@ window.TurtleModToolbar = (() => {
       boxShadow: "0 2px 4px rgba(0,0,0,0.25)"
     });
 
-    // Append right-side items in correct Snail IDE order
     right.appendChild(seePageBtn);
     right.appendChild(uploadBtn);
     right.appendChild(blocksCounter);
-    right.appendChild(authBtn); // LAST item
+    right.appendChild(authBtn);
 
-    // -----------------------------
-    // Assemble toolbar
-    // -----------------------------
     bar.appendChild(left);
     bar.appendChild(middle);
     bar.appendChild(right);
 
-    // Insert toolbar at the top of editor-root
     root.prepend(bar);
 
-    // -----------------------------
-    // Actions
-    // -----------------------------
     bar.addEventListener("click", e => {
       const action = e.target.dataset.action;
       if (!action) return;
@@ -188,9 +167,6 @@ window.TurtleModToolbar = (() => {
       }
     });
 
-    // -----------------------------
-    // Block counter updater
-    // -----------------------------
     Toolbar.setBlockCount = function (n) {
       const el = document.getElementById("tm-block-count");
       if (el) el.textContent = `${n} block${n === 1 ? "" : "s"}`;
