@@ -13,7 +13,6 @@
         color: #1a1a1a;
       }
 
-      /* Header */
       header {
         background: #2e8b57;
         color: white;
@@ -35,7 +34,6 @@
         font-weight: 500;
       }
 
-      /* Stage preview */
       .stage-container {
         width: 100%;
         max-width: 900px;
@@ -54,7 +52,6 @@
         position: relative;
       }
 
-      /* Description */
       .description {
         max-width: 900px;
         margin: 20px auto;
@@ -62,7 +59,6 @@
         text-align: center;
       }
 
-      /* Projects section */
       .projects-section {
         max-width: 900px;
         margin: 30px auto;
@@ -78,12 +74,6 @@
         color: #b30000;
       }
 
-      .error-box a {
-        color: #b30000;
-        font-weight: 600;
-      }
-
-      /* Footer */
       footer {
         margin-top: 60px;
         padding: 30px 20px;
@@ -103,7 +93,6 @@
 
   <body>
 
-    <!-- Header -->
     <header>
       <div class="logo">TurtleMod</div>
       <nav>
@@ -113,22 +102,18 @@
       </nav>
     </header>
 
-    <!-- Stage preview -->
     <div class="stage-container">
       <div id="tm-stage"></div>
     </div>
 
-    <!-- Description -->
     <div class="description">
       <h2>Welcome to TurtleMod</h2>
       <p>
         TurtleMod is a mod of Snail IDE, built on top of Scratch, TurboWarp, and PenguinMod.
         It adds new blocks, features, and tools for advanced creators.
-        Choose a project below or open the editor to begin.
       </p>
     </div>
 
-    <!-- Projects -->
     <div class="projects-section">
       <h3>Featured Projects</h3>
 
@@ -140,7 +125,6 @@
       </div>
     </div>
 
-    <!-- Footer -->
     <footer>
       <p>
         TurtleMod is not affiliated with Scratch, the Scratch Team, TurboWarp,
@@ -156,26 +140,41 @@
       </div>
     </footer>
 
-    <!-- Engine files -->
+    <!-- Scratch renderer -->
+    <script src="https://unpkg.com/scratch-render/dist/web/scratch-render.js"></script>
+    <script src="https://unpkg.com/scratch-svg-renderer/dist/web/scratch-svg-renderer.js"></script>
+    <script src="https://unpkg.com/scratch-storage/dist/web/scratch-storage.js"></script>
+
+    <!-- TurtleMod engine -->
     <script src="engine/renderer.js"></script>
+    <script src="engine/snailvm.js"></script>
     <script src="engine/runtime.js"></script>
 
-    <!-- Viewer initialization -->
     <script>
-      window.addEventListener("load", () => {
+      window.addEventListener("load", async () => {
         const stageEl = document.getElementById("tm-stage");
 
-        // Viewer mode: workspace not needed
-        const workspace = { getBlocks: () => [] };
+        // Initialize renderer
+        TurtleModRenderer.initStage(stageEl);
 
-        // Initialize the stage canvas
-        TurtleModRenderer.initStage(stageEl, workspace);
+        // VM is created by snailvm.js
+        const vm = window.SnailIDE.vm;
 
-        // Initialize runtime if present
-        if (window.TurtleModRuntime) {
-          const runtime = new TurtleModRuntime(stageEl);
-          // runtime.loadProject("projects/example.json"); // optional
-        }
+        // Load a default empty project
+        const emptyProject = {
+          meta: { semver: "3.0.0" },
+          targets: [
+            {
+              isStage: false,
+              name: "Sprite1",
+              blocks: {},
+              costumes: [],
+              sounds: []
+            }
+          ]
+        };
+
+        vm.loadProject(JSON.stringify(emptyProject));
       });
     </script>
 
