@@ -1,37 +1,35 @@
 // ui/toolbar.js
 //
-// Full Snail IDE–style top toolbar for TurtleMod (SnailMod-Green theme)
-// Includes:
-// - File / Edit / Addons / Settings menus (left)
-// - Project name input (center)
-// - See Project Page / Upload / Block Counter / Sign in-Join (right)
-// - Sign in-Join uses TurtleMod-green gradient (dark → light)
+// SnailMod-Green Toolbar
+// Corrected to attach inside #editor-root (your actual HTML structure)
+// No dependency on #tm-topbar
 //
 
 window.TurtleModToolbar = (() => {
   const Toolbar = {};
 
   Toolbar.init = function () {
-    const topbar = document.getElementById("tm-topbar");
-    if (!topbar) {
-      console.error("TurtleModToolbar: #tm-topbar not found");
+    const root = document.getElementById("editor-root");
+    if (!root) {
+      console.error("TurtleModToolbar: #editor-root not found");
       return;
     }
 
-    // Main toolbar container
+    // Create toolbar container
     const bar = document.createElement("div");
     bar.id = "tm-toolbar";
 
     Object.assign(bar.style, {
+      width: "100%",
+      height: "56px",
+      background: "#1f7a3a",
+      color: "white",
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      width: "100%",
-      height: "100%",
       padding: "0 16px",
       boxSizing: "border-box",
-      color: "white",
-      fontSize: "14px",
+      fontFamily: "Inter, sans-serif",
       userSelect: "none"
     });
 
@@ -167,7 +165,9 @@ window.TurtleModToolbar = (() => {
     bar.appendChild(left);
     bar.appendChild(middle);
     bar.appendChild(right);
-    topbar.appendChild(bar);
+
+    // Insert toolbar at the top of editor-root
+    root.prepend(bar);
 
     // -----------------------------
     // Actions
