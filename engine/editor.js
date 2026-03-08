@@ -1,7 +1,6 @@
 // engine/editor.js
 //
 // TurtleMod Editor Core
-// Updated to attach to #editor-root and initialize sidebar blocks
 //
 
 window.TurtleModEditor = (() => {
@@ -14,20 +13,18 @@ window.TurtleModEditor = (() => {
       return;
     }
 
-    // Create main editor container
     const editor = document.createElement("div");
     editor.id = "tm-editor";
 
     Object.assign(editor.style, {
       width: "100%",
-      height: "calc(100vh - 56px)", // below toolbar
+      height: "calc(100vh - 56px)",
       display: "flex",
       flexDirection: "row",
       overflow: "hidden",
       background: "#f4f7f4"
     });
 
-    // Sidebar
     const sidebar = document.createElement("div");
     sidebar.id = "tm-sidebar";
 
@@ -38,12 +35,10 @@ window.TurtleModEditor = (() => {
       overflowY: "auto"
     });
 
-    // Initialize block palette in sidebar
     if (window.TurtleModBlocks) {
       TurtleModBlocks.initSidebar(sidebar);
     }
 
-    // Workspace
     const workspace = document.createElement("div");
     workspace.id = "tm-workspace";
 
@@ -54,7 +49,6 @@ window.TurtleModEditor = (() => {
       overflow: "hidden"
     });
 
-    // Stage
     const stage = document.createElement("div");
     stage.id = "tm-stage";
 
@@ -65,13 +59,26 @@ window.TurtleModEditor = (() => {
       overflow: "hidden"
     });
 
-    // Assemble editor layout
     editor.appendChild(sidebar);
     editor.appendChild(workspace);
     editor.appendChild(stage);
 
-    // Insert editor into root
     root.appendChild(editor);
+
+    const workspaceEngine = TurtleModWorkspace.init(workspace);
+    if (window.TurtleModIO) {
+      TurtleModIO.init(workspaceEngine);
+    }
+    if (window.TurtleModRuntime) {
+      TurtleModRuntime.init(workspaceEngine);
+    }
+    if (window.TurtleModRenderer) {
+      TurtleModRenderer.initStage(stage, workspaceEngine);
+    }
+
+    if (window.TurtleModToolbar && window.TurtleModToolbar.setBlockCount) {
+      TurtleModToolbar.setBlockCount(workspaceEngine.getBlocks().length);
+    }
 
     console.log("TurtleModEditor initialized");
   };
