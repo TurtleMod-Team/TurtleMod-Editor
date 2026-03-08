@@ -27,6 +27,10 @@ window.TurtleModBlocks = (() => {
         TurtleModWorkspace.spawnBlockFromPalette(block, e);
       });
 
+      div.addEventListener("touchstart", e => {
+        TurtleModWorkspace.spawnBlockFromPalette(block, e);
+      });
+
       sidebarEl.appendChild(div);
     });
   };
