@@ -1,7 +1,7 @@
-# 🐢 TurtleMod Website
+# 🐢 TurtleMod Editor
 
 The Editor for **TurtleMod** projects, built with **Vite**, **React**, and **TypeScript**. 
-This site serves as the edtor for **TurtleMod**, as also the projects.
+This site serves as the editor for **TurtleMod**, as also the projects.
 
 ## 📦 Development
 
